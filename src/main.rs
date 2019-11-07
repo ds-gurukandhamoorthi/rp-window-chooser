@@ -21,15 +21,17 @@ fn main() {
 
     let output = ext_process.wait_with_output().expect("Error while getting chosen window form dmenu");
     let chosen_window = str::from_utf8(&output.stdout).unwrap().trim();
-    // println!("{}", chosen_window);
 
-    let mut fields = chosen_window.split(',');
-    let window_number = fields.next();
-    match window_number {
-        Some(num) => {
+    //when we have not chosen anything in dmenu, the resulting string's length is 0  (after it is trimmed)
+    if chosen_window.len() > 0 {
+
+        let mut fields = chosen_window.split(',');
+        let window_number = fields.next();
+
+        if let Some(num) = window_number {
+            let num: i32 = num.parse().expect("The window number was not an integer"); //this will help us avoid any error in our formatting string "%n,%c".. Had we written "%n|%c" there won't be a number hwn split by ',' and we would catch the error here.
             let rp_command = format!("select {}", num);
             Command::new("ratpoison").arg("-c").arg(rp_command).output().expect("Failed to switch windows in Ratpoison");
-        },
-        None => (), //No window chosen
+        }
     }
 }
