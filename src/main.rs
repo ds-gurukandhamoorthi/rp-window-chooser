@@ -33,15 +33,14 @@ fn main() {
 
     //when we have not chosen anything in dmenu, the resulting string's length is 0  (after it is trimmed)
     if chosen_window.len() > 0 {
+        let mut fields = chosen_window.split(',');
         if chosen_window.starts_with("tmux") {
-            let mut fields = chosen_window.split(',');
             let window_number = fields.nth(1).unwrap();
             let tmux_args = ["select-window", "-t", window_number];
             Command::new("tmux").args(&tmux_args).output().expect("Failed to switch windows in Tmux");
 
         } else {
 
-            let mut fields = chosen_window.split(',');
             let window_number = fields.next();
 
             if let Some(num) = window_number {
